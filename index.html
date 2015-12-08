@@ -86,7 +86,10 @@ select.ng-invalid {
 
 .current-temp .panel-body {
 	text-align: center;
+}
+.current-temp .temp {
 	font-size: 8em;
+	display: block;
 }
 
 .thresholds .panel-body > * {
@@ -195,6 +198,10 @@ ventApp.controller('VentCtrl', ['$scope', function ($scope) {
 		<div class="panel-heading">Current Temperature</div>
 		<div class="panel-body">
 			<temp value="cur_temp" given="internal_units" display="display_units"></temp>
+			<div class="btn-group">
+				<label class="btn btn-primary" ng-model="display_units" uib-btn-radio="'C'">Celsius</label>
+				<label class="btn btn-primary" ng-model="display_units" uib-btn-radio="'F'">Fahrenheit</label>
+			</div>
 		</div>
 	</div>
 	<div class="panel panel-default schedule">
