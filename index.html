@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ECE 4534 Interface</title>
+	<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  	<script src="/bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+  	<script src="/bower_components/angular/angular.min.js"></script>	
+	<script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+	<script src="/bower_components/angular-ui-slider/src/slider.js"></script>
+	<link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"></style>
+	<link rel="stylesheet" href="/bower_components/jquery-ui/themes/smoothness/jquery-ui.css">
+	<style>
+/* for ui-bootstrap */
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+/* local */
+h1, table, th {
+	text-align: center;
+}
+th {
+	font-size: 1.2em;
+}
+td {
+	font-family: monospace;
+}
+h1.jumbotron {
+	font-size: 3.5em;
+}
+.cool {
+	color: #0af;
+	font-weight: bold;
+}
+.heat {
+	color: #f00;
+	font-weight: bold;
+}
+.panel {
+	margin: 50px 0px;
+}
+.panel-heading {
+	font-size: 1.5em;
+}
+.panel-body {
+	overflow: hidden;
+	font-size: 1.25em;
+}
+input,
+select {
+	margin: 2px;
+	background: white;
+	border: 1px solid black;
+	border-radius: 3px;
+	height: 2em;
+}
+input.ng-invalid,
+select.ng-invalid {
+	border: 1px solid red;
+	background: #fdd;
+}
+
+.state img {
+	margin: auto;
+	display: block;
+	clear: both;
+}
+.state .panel-body {
+	text-align: center;
+}
+.state button {
+	display: inline-block;
+	font-size: 1.5em !important;
+	margin: 0.5em 2em;
+}
+
+.schedule ul {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+.schedule li {
+	margin: 1em;
+}
+.schedule img {
+	margin-right: 0.5em;
+}
+
+.current-temp .panel-body {
+	text-align: center;
+	font-size: 8em;
+}
+
+.thresholds .panel-body > * {
+	padding: 1em;
+}
+.thresholds label {
+	font-weight: normal;
+}
+.thresholds .lower-bound .ui-slider-range {
+	background: #0af;
+}
+.thresholds .upper-bound .ui-slider-range {
+	background: #f00;
+}
+.thresholds {
+	font-size: 1.25em;
+}
+.thresholds select {
+	height: 1.5em;
+}
+	</style>
+	<script>
+var xxx;
+var ventApp = angular.module('ventApp', ['ui.bootstrap', 'ui.slider']);
+ventApp.filter('temp', function() {
+	return function(input, from, to) {
+		function pick(x, def) {
+			return x === 'C' || x === 'F' ? x : pick(def, 'C');
+		}
+		from = pick(from, to);
+		to = pick(to, from);
+		var C = (from === 'F' ? (input - 32) * 5/9 : input);
+		return (to === 'F' ? C * 9/5 + 32 : C);
+	};
+});
+ventApp.directive('temp', function() {
+	return {
+		restrict: 'E',
+		scope: {
+			value:'=',
+			from:'=given',
+			to:'=display'
+		},
+		template: '<span class="temp">{{value|temp:from:to|number:1}}<sup>{{to}}</sup></span>'
+	};
+});
+ventApp.controller('VentCtrl', ['$scope', function ($scope) {
+	xxx = $scope;
+
+	$scope.open = function() {
+		console.log('opening');
+		$scope.state = 'open';
+	}
+	$scope.close = function() {
+		console.log('closing');
+		$scope.state = 'closed';
+	}
+	$scope.add_event = function() {
+		$scope.schedule.push({type: 'at'});
+
+		// XXX ugly hack to focus newly created input
+		setTimeout(function() {
+			Array.prototype.slice.call(document.querySelectorAll('.schedule form > *:not(.ng-hide) input'), -1)[0].focus();
+		}, 100);
+	}
+	$scope.remove_event = function(e) {
+		$scope.schedule = $scope.schedule.filter(function(x) {
+			return x !== e;
+		});
+	}
+
+	$scope.state = 'closed';
+	$scope.schedule = [
+		{type: 'at', at: '18:00'},
+		{type: 'every', every:{n: 15, period:'minutes'}},
+		{type: 'every', every:{n: 1, period:'hours'}},
+	];
+	// units are internally normalized to deg C, then potentially converted to F when displayed
+	$scope.target_temp = 22.222;
+	$scope.cur_temp = 21.555;
+	$scope.internal_units = 'C';
+	$scope.display_units = 'F';
+	$scope.mode = 'heat'; // vs cool
+	$scope.lower_bound = 15.0;
+	$scope.upper_bound = 25.0;
+
+	$scope.op_when = function(bound) {
+		return $scope.mode === 'heat' ^ bound === 'higher' ? 'Open' : 'Close';
+	}
+}]);
+	</script>
+</head>
+<body ng-app="ventApp">
+
+<div class="container" ng-controller="VentCtrl">
+	<h1 class="jumbotron">Air Vent Control Interface</h1>
+	<div class="panel panel-default state">
+		<div class="panel-heading">Vent State</div>
+		<div class="panel-body">
+			<img ng-src="/{{state}}.png" />
+			<button class="btn btn-success" ng-click="open()">Open</button>
+			<button class="btn btn-danger" ng-click="close()">Close</button>
+		</div>
+	</div>
+	<div class="panel panel-default current-temp">
+		<div class="panel-heading">Current Temperature</div>
+		<div class="panel-body">
+			<temp value="cur_temp" given="internal_units" display="display_units" />
+		</div>
+	</div>
+	<div class="panel panel-default schedule">
+		<div class="panel-heading">Scheduled Opens &amp; Closes</div>
+		<div class="panel-body">
+			<ul>
+				<li ng-repeat="e in schedule"><form>
+					<img src="/bower_components/famfamfam-silk/dist/png/delete.png" alt="Remove" ng-click="remove_event(e)" />
+					<select ng-model="e.type" required>
+						<option value="at">At</option>
+						<option value="every">Every</option>
+					</select>
+					<span ng-show="e.type === 'at'">
+						<input ng-model="e.at" ng-trim="false" pattern="(?:1[0-9]|2[0-3]|[1-9]):[0-5][0-9]" placeholder="23:59" ng-required="e.type === 'at'" /> every day
+					</span>
+					<span ng-show="e.type === 'every'">
+						<input type="number" ng-trim="false" pattern="[1-9][0-9]*" ng-model="e.every.n" placeholder="1" ng-required="e.type === 'every'" />
+						<select ng-model="e.every.period" ng-required="e.type === 'every'">
+							<option value="minutes">minute{{e.every.n != 1 ? 's' : ''}}</option>
+							<option value="hours">hour{{e.every.n != 1 ? 's' : ''}}</option>
+						</select>
+					</span>
+				</form></li>
+				<li><img src="/bower_components/famfamfam-silk/dist/png/add.png" alt="Add" ng-click="add_event()" /></li>
+			</ul>
+		</div>
+	</div>
+	<div class="panel panel-default thresholds">
+		<div class="panel-heading">Open/Close Thresholds</div>
+		<div class="panel-body">
+			<label>Thermostat mode: <select ng-model="mode" ng-class="mode">
+				<option value="heat" class="heat">Heat</option>
+				<option value="cool" class="cool">Cool</option>
+			</select></label>
+			<div class="lower-bound">
+				<b>{{op_when('lower')}}</b> if <span class="cool">lower</span> than <temp value="lower_bound" given="internal_units" display="display_units"></temp>
+				<div ui-slider="{range: 'min'}" min="10|temp:'C':display_units" max="30|temp:'C':display_units" step="0.1" use-decimals ng-model="lower_bound"></div>
+			</div>
+			<div class="upper-bound">
+				<b>{{op_when('higher')}}</b> if <span class="heat">higher</span> than <temp value="upper_bound" given="internal_units" display="display_units"></temp>
+				<div ui-slider="{range: 'max'}" min="10|temp:'C':display_units" max="30|temp:'C':display_units" step="0.01" use-decimals ng-model="upper_bound"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
