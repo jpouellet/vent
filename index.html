@@ -186,7 +186,7 @@ ventApp.controller('VentCtrl', ['$scope', function ($scope) {
 	<div class="panel panel-default state">
 		<div class="panel-heading">Vent State</div>
 		<div class="panel-body">
-			<img ng-src="/{{state}}.png" />
+			<img ng-src="/{{state}}.png" alt="{{state}}" />
 			<button class="btn btn-success" ng-click="open()">Open</button>
 			<button class="btn btn-danger" ng-click="close()">Close</button>
 		</div>
