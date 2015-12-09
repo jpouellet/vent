@@ -142,8 +142,50 @@ ventApp.directive('temp', function() {
 		template: '<span class="temp">{{value|temp:from:to|number:1}}<sup>{{to}}</sup></span>'
 	};
 });
-ventApp.controller('VentCtrl', ['$scope', function ($scope) {
+ventApp.controller('VentCtrl', ['$scope', '$http', function ($scope, $http) {
 	xxx = $scope;
+	xxxh = $http;
+
+	function load(onDone) {
+		$http.get('/load.cgi').then(function(response) {
+			var d = response.data;
+console.log(d);
+
+			$scope.state = d.state;
+			$scope.cur_temp = d.cur_temp;
+			$scope.schedule = d.schedule;
+			$scope.display_units = d.display_units;
+			$scope.mode = d.mode;
+			$scope.lower_bound = d.lower_bound;
+			$scope.upper_bound = d.upper_bound;
+
+			$scope.loaded = true;
+			onDone();
+		}, function() {
+			console.log('failed to load');
+			setTimeout(function() {
+				load(onDone);
+			}, 1000);
+		});
+	}
+
+	function store() {
+		$http.post('/store.cgi', {
+			"schedule": $scope.schedule,
+			"display_units": $scope.display_units,
+			"mode": $scope.mode,
+			"lower_bound": $scope.lower_bound,
+			"upper_bound": $scope.upper_bound
+		}).then(function(response) {
+console.log('asdf');
+			setTimeout(store, 1000);
+		}, function() {
+			console.log('failed to store');
+			setTimeout(store, 1000);
+		});
+	}
+
+	load(store);
 
 	$scope.open = function() {
 		console.log('opening');
@@ -167,6 +209,9 @@ ventApp.controller('VentCtrl', ['$scope', function ($scope) {
 		});
 	}
 
+	$scope.internal_units = 'C';
+	$scope.loaded = false;
+/*
 	$scope.state = 'closed';
 	$scope.schedule = [
 		{type: 'at', at: '18:00'},
@@ -174,13 +219,12 @@ ventApp.controller('VentCtrl', ['$scope', function ($scope) {
 		{type: 'every', every:{n: 1, period:'hours'}},
 	];
 	// units are internally normalized to deg C, then potentially converted to F when displayed
-	$scope.target_temp = 22.222;
 	$scope.cur_temp = 21.555;
-	$scope.internal_units = 'C';
 	$scope.display_units = 'F';
 	$scope.mode = 'heat'; // vs cool
 	$scope.lower_bound = 15.0;
 	$scope.upper_bound = 25.0;
+*/
 
 	$scope.op_when = function(bound) {
 		return $scope.mode === 'heat' ^ bound === 'higher' ? 'Open' : 'Close';
@@ -188,9 +232,9 @@ ventApp.controller('VentCtrl', ['$scope', function ($scope) {
 }]);
 	</script>
 </head>
-<body ng-app="ventApp">
+<body ng-app="ventApp" ng-controller="VentCtrl">
 
-<div class="container" ng-controller="VentCtrl">
+<div class="container" ng-show="loaded">
 	<h1 class="jumbotron">Air Vent Control Interface</h1>
 	<div class="panel panel-default state">
 		<div class="panel-heading">Vent State</div>
