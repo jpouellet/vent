@@ -83,6 +83,9 @@ select.ng-invalid {
 .schedule img {
 	margin-right: 0.5em;
 }
+.schedule input {
+	width: 75px;
+}
 
 .current-temp .panel-body {
 	text-align: center;
@@ -272,6 +275,10 @@ ventApp.controller('VentCtrl', ['$scope', '$http', function ($scope, $http) {
 			<ul>
 				<li ng-repeat="e in schedule"><form>
 					<img src="/bower_components/famfamfam-silk/dist/png/delete.png" alt="Remove" ng-click="remove_event(e)" />
+					<select ng-model="e.action" required>
+						<option value="open">Open</option>
+						<option value="close">Close</option>
+					</select>
 					<select ng-model="e.type" required>
 						<option value="at">At</option>
 						<option value="every">Every</option>

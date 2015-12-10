@@ -18,10 +18,10 @@ d['schedule'] = []
 try:
 	for e in x['schedule']:
 		try:
-			if e['type'] == 'at' and re.match('(?:1[0-9]|2[0-3]|[1-9]):[0-5][0-9]', e['at']):
-				d['schedule'].append({'type':'at', 'at':e['at']})
-			elif e['type'] == 'every' and isinstance(e['every']['n'], int) and e['every']['n'] > 0 and e['every']['period'] in ('minutes', 'hours'):
-				d['schedule'].append({'type':'every', 'every':{'n':e['every']['n'], 'period':e['every']['period']}})
+			if e['type'] == 'at' and e['action'] in ('open', 'close') and re.match('(?:1[0-9]|2[0-3]|[1-9]):[0-5][0-9]', e['at']):
+				d['schedule'].append({'type':'at', 'action':e['action'], 'at':e['at']})
+			elif e['type'] == 'every' and e['action'] in ('open', 'close') and isinstance(e['every']['n'], int) and e['every']['n'] > 0 and e['every']['period'] in ('minutes', 'hours'):
+				d['schedule'].append({'type':'every', 'action':e['action'], 'every':{'n':e['every']['n'], 'period':e['every']['period']}})
 		except:
 			pass
 except:
