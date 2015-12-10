@@ -21,7 +21,7 @@ try:
 			if e['type'] == 'at' and re.match('(?:1[0-9]|2[0-3]|[1-9]):[0-5][0-9]', e['at']):
 				d['schedule'].append({'type':'at', 'at':e['at']})
 			elif e['type'] == 'every' and isinstance(e['every']['n'], int) and e['every']['n'] > 0 and e['every']['period'] in ('minutes', 'hours'):
-				d['schedule'].append({'type':'every', 'every':{'n':x['every']['n'], 'period':x['every']['period']}})
+				d['schedule'].append({'type':'every', 'every':{'n':e['every']['n'], 'period':e['every']['period']}})
 		except:
 			pass
 except:
