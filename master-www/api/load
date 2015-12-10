@@ -9,6 +9,5 @@ print ''
 d = json.loads(open('../../data.json', 'r').read())
 
 d['cur_temp'] = 21.555
-d['state'] = open('../../state').read().split('\n')[0]
 
 print json.dumps(d)
