@@ -49,7 +49,7 @@ try:
 except:
 	pass
 
-open('../data.json', 'w').write(json.dumps(x)+'\n')
+open('../../data.json', 'w').write(json.dumps(d)+'\n')
 
 print 'Content-Type: text/plain'
 print ''
