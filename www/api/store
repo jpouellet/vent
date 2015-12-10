@@ -37,14 +37,14 @@ except:
 
 d['lower_bound'] = 15.0
 try:
-	if instanceof(x['lower_bound'], float):
+	if isinstance(x['lower_bound'], float) or isinstance(x['lower_bound'], int):
 		d['lower_bound'] = x['lower_bound']
 except:
 	pass
 
 d['upper_bound'] = 25.0
 try:
-	if instanceof(x['upper_bound'], float):
+	if isinstance(x['upper_bound'], float) or isinstance(x['upper_bound'], int):
 		d['upper_bound'] = x['upper_bound']
 except:
 	pass
