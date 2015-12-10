@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo 'Content-Type: text/plain'
+echo
+
+state=$(basename "$0")
+
+if ../../servo.py "$state" && echo "$state" > ../../state; then
+	echo OK
+else
+	echo FAIL
+fi

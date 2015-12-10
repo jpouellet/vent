@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# XXX should really return meaningful HTTP status codes
+
+echo 'Content-Type: text/plain'
+echo
+
+cmd="${SCRIPT_NAME##*/}"
+
+case "$cmd" in
+open)	state=open ;;
+close)	state=closed ;;
+*)	echo Bad state.; exit ;;
+esac
+
+if ../../servo.py "$cmd" && echo "$state" > ../../state; then
+	echo OK
+else
+	echo FAIL
+fi
