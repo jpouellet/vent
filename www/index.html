@@ -144,12 +144,11 @@ ventApp.directive('temp', function() {
 });
 ventApp.controller('VentCtrl', ['$scope', '$http', function ($scope, $http) {
 	xxx = $scope;
-	xxxh = $http;
 
 	function load(onDone) {
 		$http.get('/api/load').then(function(response) {
 			var d = response.data;
-console.log(d);
+			console.log(d);
 
 			$scope.state = d.state;
 			$scope.cur_temp = d.cur_temp;
@@ -177,7 +176,6 @@ console.log(d);
 			"lower_bound": $scope.lower_bound,
 			"upper_bound": $scope.upper_bound
 		}).then(function(response) {
-console.log('asdf');
 			setTimeout(store, 1000);
 		}, function() {
 			console.log('failed to store');
