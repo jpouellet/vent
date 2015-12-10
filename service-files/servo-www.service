@@ -1,0 +1,5 @@
+[Unit]
+Description=thttpd
+
+[Service]
+ExecStart=/bin/bash -c "cd /home/pi/vent && /usr/local/sbin/thttpd -p 80 -d servo-www -l - -u pi -c 'api/**' -D"
