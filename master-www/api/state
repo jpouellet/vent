@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo 'Content-Type: text/plain'
+echo
+if [ ! -f ../../servo_host ]; then
+	./zeroconf > /dev/null
+fi
+curl -s http://$(<../../servo_host)/api/${SCRIPT_NAME##*/}

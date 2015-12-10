@@ -1,4 +1,5 @@
 *.swp
 /data.json
+/servo_host
 /state
 bower_components

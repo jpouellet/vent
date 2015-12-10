@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo 'Content-Type: text/plain'
+echo
+for x in servo; do
+	name=vent-$x
+	host=$(../../discover.py "$name" _http._tcp)
+	echo $host > ../../${x}_host
+	printf '%s: %s' "$name" "$host"
+done
