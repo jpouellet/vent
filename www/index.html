@@ -187,6 +187,20 @@ console.log('asdf');
 
 	load(store);
 
+	(function updateState() {
+		$http.get('/api/state').then(function(response) {
+			var ns = response.data.split('\n')[0];
+			if (ns != $scope.state)
+				console.log('got state update: '+ns);
+			if (ns === 'open' || ns === 'closed')
+				$scope.state = ns;
+			setTimeout(updateState, 1000);
+		}, function() {
+			console.log('failed to update state');
+			setTimeout(updateState, 1000);
+		});
+	})();
+
 	$scope.open = function() {
 		console.log('opening');
 		$http.get('/api/open');
