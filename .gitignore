@@ -1,3 +1,4 @@
 *.swp
 data.json
+state
 www/bower_components/
