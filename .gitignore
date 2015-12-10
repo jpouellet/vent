@@ -1,4 +1,4 @@
 *.swp
-data.json
-state
-www/bower_components/
+/data.json
+/state
+/www/bower_components/
