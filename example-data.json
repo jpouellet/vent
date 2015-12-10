@@ -1,0 +1,1 @@
+{"lower_bound": 20, "display_units": "F", "mode": "heat", "upper_bound": 23.91, "schedule": [{"action": "close", "every": {"period": "minutes", "n": 30}, "type": "every"}, {"action": "close", "type": "at", "at": "20:00"}, {"action": "open", "type": "at", "at": "7:00"}]}
