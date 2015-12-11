@@ -9,7 +9,7 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(7, GPIO.OUT)
 
-OPEN = 6.0
+OPEN = 5.0
 CLOSED = 11.0
 
 p = GPIO.PWM(7, 50)
