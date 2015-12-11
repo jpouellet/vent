@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo 'Content-Type: text/plain'
+echo
+
+temp=$(sudo ../../temp.py)
+printf '%s\n' "$temp"
+sudo ../../leds.py "$temp"
